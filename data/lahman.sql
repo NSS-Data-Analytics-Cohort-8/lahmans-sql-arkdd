@@ -10,13 +10,53 @@
 
 -- -- -- 1. What range of years for baseball games played does the provided database cover? 
 
+SELECT MAX (Year) - MIN (year)
+FROM homegames
+
+-- The earliest game is 2016 and the oldest game is 1871, So this is spanned over 145 years.
+
 -- -- -- 2. Find the name and height of the shortest player in the database. How many games did he play in? What is the name of the team for which he played?
+ 
+-- SELECT namefirst, 
+--        namelast,
+-- 	   height
+-- WHERE MIN(height) 
+-- FROM people;
    
+ 
+SELECT namefirst, 
+       namelast, 
+       height, 
+       COUNT(G_all) AS Number_of_Games, 
+       teamID
+FROM people
+JOIN appearances 
+ON people.playerID = appearances.playerID
+WHERE height = (SELECT MIN(height) 
+                FROM people)
+GROUP BY teamID, namefirst,namelast, height;
+ 
+-- Eddie Gaedel 
+
 
 -- -- -- 3. Find all players in the database who played at Vanderbilt University. Create a list showing each player’s first and last names as well as the total salary they earned in the major leagues. Sort this list in descending order by the total salary earned. Which Vanderbilt player earned the most money in the majors?
 	
+SELECT *
+FROM schools AS s
+LEFT JOIN collegeplaying AS c
+ON c.playerid = s.schoolid
+LEFT JOIN people AS p
+ON p.playerid = c.playerid
+LEFT JOIN salaries AS sl
+USING (playerid)
+WHERE s.schoolname = 'Vanderbilt University'
+ORDER BY sl.salary DESC;	
 
 -- -- -- 4. Using the fielding table, group players into three groups based on their position: label players with position OF as "Outfield", those with position "SS", "1B", "2B", and "3B" as "Infield", and those with position "P" or "C" as "Battery". Determine the number of putouts made by each of these three groups in 2016.
+   
+   
+   
+   
    
 -- -- -- 5. Find the average number of strikeouts per game by decade since 1920. Round the numbers you report to 2 decimal places. Do the same for home runs per game. Do you see any trends?
    
